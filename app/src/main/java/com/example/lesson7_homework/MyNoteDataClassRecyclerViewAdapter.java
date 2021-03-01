@@ -12,17 +12,27 @@ import java.util.ArrayList;
 public class MyNoteDataClassRecyclerViewAdapter extends RecyclerView.Adapter<MyNoteDataClassRecyclerViewAdapter.ViewHolder> {
 
     private ArrayList<NoteDataClass> mValues;
-    NotesListFragment fragment;
+    private OnItemClickListener itemClickListener;
 
-    public MyNoteDataClassRecyclerViewAdapter(ArrayList<NoteDataClass> items, NotesListFragment fragment) {
-        this.fragment = fragment;
+    public MyNoteDataClassRecyclerViewAdapter(ArrayList<NoteDataClass> items) {
         mValues = items;
     }
+
+    public void SetOnItemClickListener(OnItemClickListener itemClickListener){
+        this.itemClickListener = itemClickListener;
+    }
+
+    // Интерфейс для обработки нажатий, как в ListView
+    public interface OnItemClickListener {
+        void onItemClick(View view , int position);
+    }
+
+
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_item, parent, false);
+                .inflate(R.layout.item_card, parent, false);
         return new ViewHolder(view);
     }
 
@@ -30,9 +40,7 @@ public class MyNoteDataClassRecyclerViewAdapter extends RecyclerView.Adapter<MyN
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.name.setText(mValues.get(position).name);
         holder.date.setText(mValues.get(position).date);
-        holder.itemView.setOnClickListener(v -> {
-            fragment.onClickListItem(position);
-        });
+
     }
 
     @Override
@@ -44,11 +52,19 @@ public class MyNoteDataClassRecyclerViewAdapter extends RecyclerView.Adapter<MyN
         TextView name;
         TextView date;
 
+
         public ViewHolder(View view) {
             super(view);
             name = view.findViewById(R.id.item_name);
             date = view.findViewById(R.id.item_date);
-
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (itemClickListener != null) {
+                        itemClickListener.onItemClick(v, getAdapterPosition());
+                    }
+                }
+            });
         }
 
     }

@@ -18,21 +18,11 @@ import java.util.ArrayList;
 /**
  * A fragment representing a list of Items.
  */
-public class NotesListFragment extends Fragment {
+public class NotesListFragment extends Fragment implements MyNoteDataClassRecyclerViewAdapter.OnItemClickListener {
 
-    ArrayList<NoteDataClass> list;
+
     boolean isLand;
 
-    public NotesListFragment() {
-        list = new ArrayList<>();
-        list.add(new NoteDataClass("Заметки дня1", "Описание заметки дня 1", "17.01.2021"));
-        list.add(new NoteDataClass("Заметки дня2", "Описание заметки дня 2", "16.01.2021"));
-        list.add(new NoteDataClass("Заметки дня3", "Описание заметки дня 3", "15.01.2021"));
-
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static NotesListFragment newInstance() {
         NotesListFragment fragment = new NotesListFragment();
         Bundle args = new Bundle();
@@ -56,24 +46,26 @@ public class NotesListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
-            recyclerView.setAdapter(new MyNoteDataClassRecyclerViewAdapter(list, this));
-        }
+                MyNoteDataClassRecyclerViewAdapter dataAdapter = new MyNoteDataClassRecyclerViewAdapter(((MainActivity)getActivity()).list);
+                dataAdapter.SetOnItemClickListener(this);
+            recyclerView.setAdapter(dataAdapter);
+
         return view;
 
     }
 
-    public void onClickListItem(int position) {
+    public void onItemClick(View view, int position)  {
         if (!isLand) {
             FragmentTransaction fragmentTr = getActivity().getSupportFragmentManager().beginTransaction();
             DetaileFragment dataFragment = DetaileFragment.newInstance(
-                    list.get(position).name,
-                    list.get(position).description,
-                    list.get(position).date
+                    ((MainActivity)getActivity()).list.get(position).name,
+                    ((MainActivity)getActivity()).list.get(position).description,
+                    ((MainActivity)getActivity()).list.get(position).date,
+                    position
             );
             fragmentTr.addToBackStack("");
             fragmentTr.replace(R.id.Fr_container, dataFragment);
@@ -82,9 +74,10 @@ public class NotesListFragment extends Fragment {
             FragmentTransaction fragmentTr = getActivity().getSupportFragmentManager().beginTransaction();
             getActivity().findViewById(R.id.Fr_container2).setVisibility(View.VISIBLE);
             DetaileFragment dataFragment = DetaileFragment.newInstance(
-                    list.get(position).name,
-                    list.get(position).description,
-                    list.get(position).date
+                    ((MainActivity)getActivity()).list.get(position).name,
+                    ((MainActivity)getActivity()).list.get(position).description,
+                    ((MainActivity)getActivity()).list.get(position).date,
+                    position
             );
             fragmentTr.replace(R.id.Fr_container2, dataFragment);
             fragmentTr.commit();
