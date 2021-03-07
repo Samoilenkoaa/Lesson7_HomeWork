@@ -17,23 +17,30 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     boolean isLand;
-//    Toolbar toolbar;
+    //    Toolbar toolbar;
+    ArrayList<NoteDataClass> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_activity);
+        list = new ArrayList<>();
+        list.add(new NoteDataClass("Заметки дня1", "Описание заметки дня 1", "17.01.2021"));
+        list.add(new NoteDataClass("Заметки дня2", "Описание заметки дня 2", "16.01.2021"));
+        list.add(new NoteDataClass("Заметки дня3", "Описание заметки дня 3", "15.01.2021"));
         initView();
 
 
         isLand = getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE;
-        if(isLand) {
+        if (isLand) {
             FragmentTransaction fragmentTr = getSupportFragmentManager().beginTransaction();
             NotesListFragment fragment1 = NotesListFragment.newInstance();
-            DetaileFragment fragment2 = DetaileFragment.newInstance(null, null, null);
+            DetaileFragment fragment2 = DetaileFragment.newInstance(null, null, null, 0);
             findViewById(R.id.Fr_container2).setVisibility(View.VISIBLE);
             fragmentTr.replace(R.id.Fr_container, fragment1);
             fragmentTr.replace(R.id.Fr_container2, fragment2);
@@ -56,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getTitle().equals(getResources().getString(R.string.Settings_Lable))) {
+        if (item.getTitle().equals(getResources().getString(R.string.Settings_Lable))) {
             if (isLand) {
                 FragmentTransaction fragmentTr = getSupportFragmentManager().beginTransaction();
                 SettingsFragment fragment1 = SettingsFragment.newInstance();
@@ -110,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 int id = item.getItemId();
-                if (navigateFragment(id)){
+                if (navigateFragment(id)) {
                     drawer.closeDrawer(GravityCompat.START);
                     return true;
                 }
@@ -124,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         return toolbar;
     }
-
 
 
     private boolean navigateFragment(int id) {
